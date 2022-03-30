@@ -1,18 +1,28 @@
-const {BlockChain} = require('./Blockchain')
+const EC = require('elliptic').ec
+const ec = new EC('secp256k1')
+const { BlockChain } = require('./Blockchain')
+const keys = require('./keys')
 const { Transaction } = require('./Transaction')
 
 const samuCoin = new BlockChain()
-samuCoin.createTransaction(new Transaction('Alpha', 'Beta', 100))
-samuCoin.createTransaction(new Transaction('Beta', 'Alpha', 20))
+
+const myKeys = ec.keyFromPrivate(keys.private)
+const myWalletAddres = myKeys.getPublic('hex')
+
+const tx1 = new Transaction(myWalletAddres, 'otraWallet' , 10)
+tx1.singTransaction(myKeys)
+
+samuCoin.addTransaction(tx1)
+
 
 console.log("\nStarting mining");
-samuCoin.minePendingTransactions('SamuWallet')
+samuCoin.minePendingTransactions(myWalletAddres)
 
-console.log("\nBalance of samu is ", samuCoin.getBalanceOfAddress('SamuWallet'));
+console.log("\nCHAIN ", JSON.stringify(samuCoin.chain, null, 2));
 
-console.log("\nStarting mining");
-samuCoin.minePendingTransactions('SamuWallet')
+console.log("\nBalance of samu is ", samuCoin.getBalanceOfAddress(myWalletAddres));
 
-console.log("\nBalance of samu is ", samuCoin.getBalanceOfAddress('SamuWallet'));
+console.log("\nsamuCoin is valid ", samuCoin.isChainValid());
 
-// console.log(JSON.stringify(samuCoin.chain, null, 2));
+
+

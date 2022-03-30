@@ -1,6 +1,6 @@
 
 const { Transaction } = require('./Transaction')
-const {Block} = require('./Blok')
+const {Block} = require('./Block')
 
 
 class BlockChain {
@@ -17,7 +17,7 @@ class BlockChain {
         return this.chain[this.chain.length - 1]
     }
     minePendingTransactions(miningRewardAddress) {
-        let block = new Block(Date.now(), this.pendingTransactions)
+        let block = new Block(Date.now(), this.pendingTransactions, this.getLatesBlock().hash)
         block.mineBlock(this.difficulty)
         console.log('Block succesfully mined');
         this.chain.push(block)
@@ -26,8 +26,15 @@ class BlockChain {
             new Transaction(null, miningRewardAddress, this.miningReward)
         ]
     }
-    createTransaction(transactions) {
-        this.pendingTransactions.push(transactions)
+    addTransaction(transaction) {
+        if(!transaction.fromAddress || !transaction.toAddress){
+            throw new Error('Transaction must include from and to address')
+        }
+
+        if(!transaction.isValid()){
+            throw new Error('Cannot add invalid transaction to chain')
+        }
+        this.pendingTransactions.push(transaction)
     }
     getBalanceOfAddress(address) {
         let balance = 0;
@@ -46,15 +53,22 @@ class BlockChain {
         }
         return balance
     }
-    isChainVAlid() {
+    isChainValid() {
         for (let index = 1; index < this.chain.length; index++) {
             const currentBlock = this.chain[index];
             const previousBlock = this.chain[index - 1];
+
+            if(!currentBlock.hasValidTransaction()){
+                console.error(1);
+                return false
+            }
             if (currentBlock.hash !== currentBlock.calculateHash()) {
+                console.error(2);
                 return false
             }
 
             if (currentBlock.previousHash != previousBlock.hash) {
+                console.error(3, `(${currentBlock.previousHash}) - (${previousBlock.hash})`);
                 return false
             }
             return true
