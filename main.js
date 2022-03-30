@@ -1,4 +1,5 @@
-const {BlockChain, Transaction} = require('./Blockchain')
+const {BlockChain} = require('./Blockchain')
+const { Transaction } = require('./Transaction')
 
 const samuCoin = new BlockChain()
 samuCoin.createTransaction(new Transaction('Alpha', 'Beta', 100))

@@ -1,34 +1,7 @@
-const { SHA256 } = require("crypto-js")
 
-class Transaction {
-    constructor(fromAddress, toAddress, amount) {
-        this.fromAddress = fromAddress
-        this.toAddress = toAddress
-        this.amount = amount
-    }
-}
+const { Transaction } = require('./Transaction')
+const {Block} = require('./Blok')
 
-class Block {
-    constructor(timestamp, transactions, previousHash = '') {
-        this.timestamp = timestamp
-        this.transactions = transactions
-        this.previousHash = previousHash
-        this.hash = this.calculateHash()
-        this.nonce = 0
-    }
-    calculateHash(data) {
-        return SHA256(this.previousHash
-            + this.timestamp + JSON.stringify(data) + this.nonce).toString()
-    }
-
-    mineBlock(difficulty) {
-        while (this.hash.substring(0, difficulty) !== "0".repeat(difficulty)) {
-            this.nonce++
-            this.hash = this.calculateHash()
-        }
-        console.log("Block mined: " + this.hash);
-    }
-}
 
 class BlockChain {
     constructor() {
@@ -58,14 +31,14 @@ class BlockChain {
     }
     getBalanceOfAddress(address) {
         let balance = 0;
-        for(const block of this.chain){
-            for(const trans of block.transactions){
-                if(trans.fromAddress === address){
+        for (const block of this.chain) {
+            for (const trans of block.transactions) {
+                if (trans.fromAddress === address) {
                     console.log(trans.amount);
                     balance -= trans.amount
                 }
 
-                if(trans.toAddress === address){
+                if (trans.toAddress === address) {
                     console.log(trans.amount);
                     balance += trans.amount
                 }
@@ -91,4 +64,3 @@ class BlockChain {
 
 
 module.exports.BlockChain = BlockChain
-module.exports.Transaction = Transaction
