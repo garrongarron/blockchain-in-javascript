@@ -16,7 +16,9 @@ samuCoin.addTransaction(tx1)
 
 
 console.log("\nStarting mining");
-samuCoin.minePendingTransactions(myWalletAddres)
+for (let index = 0; index < 10; index++) {
+    samuCoin.minePendingTransactions(myWalletAddres)
+}
 
 console.log("\nCHAIN ", JSON.stringify(samuCoin.chain, null, 2));
 

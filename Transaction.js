@@ -11,12 +11,12 @@ class Transaction {
         this.signature = null
     }
 
-    calculateHash(){
+    calculateHash() {
         return SHA256(this.fromAddress, this.toAddress, this.amount).toString()
     }
 
-    singTransaction(signingKey){
-        if(signingKey.getPublic('hex')!== this.fromAddress){
+    singTransaction(signingKey) {
+        if (signingKey.getPublic('hex') !== this.fromAddress) {
             throw new Error('You can not sing transactions for other wallets')
         }
         const hashTx = this.calculateHash()
@@ -24,9 +24,9 @@ class Transaction {
         this.signature = sig.toDER('hex')
     }
 
-    isValid(){
-        if(this.fromAddress === null) return true
-        if(!this.signature || this.signature.length === 0){
+    isValid() {
+        if (this.fromAddress === null) return true
+        if (!this.signature || this.signature.length === 0) {
             throw new Error('No signature in this transaction')
         }
 
@@ -35,4 +35,4 @@ class Transaction {
     }
 }
 key
-module.exports.Transaction =  Transaction
+module.exports.Transaction = Transaction
