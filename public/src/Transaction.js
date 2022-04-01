@@ -1,6 +1,5 @@
-const EC = require('elliptic').ec
-const ec = new EC('secp256k1')
-const { SHA256 } = require("crypto-js")
+import SHA256 from "../js/SHA256.js"
+const ec = elliptic.ec('secp256k1')
 
 class Transaction {
     constructor(fromAddress, toAddress, amount) {
@@ -11,7 +10,8 @@ class Transaction {
     }
 
     calculateHash() {
-        return SHA256(this.fromAddress, this.toAddress, this.amount).toString()
+        return SHA256(this.fromAddress, this.toAddress, this.amount)
+        // return SHA256(this.fromAddress, this.toAddress, this.amount).toString()
     }
 
     singTransaction(signingKey) {
@@ -28,9 +28,9 @@ class Transaction {
         if (!this.signature || this.signature.length === 0) {
             throw new Error('No signature in this transaction')
         }
-
         const publicKey = ec.keyFromPublic(this.fromAddress, 'hex')
         return publicKey.verify(this.calculateHash(), this.signature)
     }
 }
-module.exports.Transaction = Transaction
+
+export default Transaction
